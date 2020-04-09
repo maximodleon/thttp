@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gdamore/tcell"
 	"github.com/jroimartin/gocui"
 	"io/ioutil"
 	"log"
@@ -11,7 +10,6 @@ import (
 // TODO: Add shortcut to copy body results
 // to clipboard
 func main() {
-	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 
 	g, err := gocui.NewGui(gocui.Output256)
 
@@ -23,13 +21,15 @@ func main() {
 	url := NewURLWidget(g, "url") //"https://jsonplaceholder.typicode.com/todos")
 	body := NewBodyWidget(g, "body")
 	helper := NewHelpBar(g, "help")
+	box := NewBoxWidget(g, "box")
+	box.Draw()
 	helper.Draw()
 	body.Draw()
 	url.Draw()
 	g.Cursor = true
 	g.Highlight = true
 	g.SelFgColor = gocui.ColorGreen
-	g.SetViewOnTop("help")
+	//	g.SetViewOnBottom("body")
 
 	// TODO: add other key binding to quit functionality
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
@@ -40,6 +40,10 @@ func main() {
 		log.Panicln(err)
 	}
 
+	if err := g.SetKeybinding("", gocui.KeyF2, gocui.ModNone, createModal); err != nil {
+		log.Panicln(err)
+	}
+
 	if err := g.SetKeybinding("", gocui.KeyF5, gocui.ModNone, displayRequestResults); err != nil {
 		log.Panicln(err)
 	}
@@ -47,6 +51,27 @@ func main() {
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
 	}
+
+}
+
+func createModal(g *gocui.Gui, v *gocui.View) error {
+	for _, v := range g.Views() {
+		_, err := g.SetViewOnBottom(v.Name())
+
+		if err != nil {
+			log.Panicln(err)
+		}
+
+		if v.Name() == "modal" {
+			g.DeleteView(v.Name())
+			return nil
+		}
+	}
+
+	modal := NewModal(g, 10, 20, 30)
+	modal.Draw()
+	g.SetViewOnTop("modal")
+	return nil
 }
 
 // TODO: add other views to toggle between when using

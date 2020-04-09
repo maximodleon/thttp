@@ -39,7 +39,7 @@ func NewURLWidget(gui *gocui.Gui, label string) *URLWidget {
 		Gui:   gui,
 		label: label,
 		Position: &Position{
-			X: 2,
+			X: 15,
 			Y: 2,
 			H: 4,
 			W: maxX - 3,

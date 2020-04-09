@@ -20,15 +20,9 @@ func NewHelpBar(gui *gocui.Gui, label string) *HelpBar {
 	h := &HelpBar{
 		Gui:   gui,
 		label: label,
-		/*		Position: &Position{
-				X: 2,
-				Y: maxY - 3,
-				W: maxX - 3,
-				H: maxY - 1,
-			},*/
 		Position: &Position{
-			X: maxX / 2,
-			Y: 20,
+			X: 2,
+			Y: maxY - 3,
 			W: maxX - 3,
 			H: maxY - 1,
 		},
